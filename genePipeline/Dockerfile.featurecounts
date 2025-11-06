@@ -1,0 +1,28 @@
+FROM debian:stretch-slim
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Repositórios arquivados (Stretch EOL)
+RUN printf 'Acquire::Check-Valid-Until "false";\nAcquire::AllowInsecureRepositories "true";\n' \
+      > /etc/apt/apt.conf.d/99archive && \
+    printf 'deb http://archive.debian.org/debian stretch main contrib non-free\n' \
+      > /etc/apt/sources.list && \
+    printf 'deb http://archive.debian.org/debian-security stretch/updates main contrib non-free\n' \
+      >> /etc/apt/sources.list && \
+    apt-get -o Acquire::Check-Valid-Until=false -o Acquire::AllowInsecureRepositories=true update && \
+    apt-get install -y --no-install-recommends \
+      build-essential wget ca-certificates tar make zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Compilar featureCounts
+RUN wget -O /tmp/subread-1.4.6-p3-source.tar.gz \
+      "https://downloads.sourceforge.net/project/subread/subread-1.4.6-p3/subread-1.4.6-p3-source.tar.gz" && \
+    tar -xzf /tmp/subread-1.4.6-p3-source.tar.gz -C /tmp && \
+    cd /tmp/subread-1.4.6-p3-source/src && \
+    make -f Makefile.Linux featureCounts && \
+    install -m 0755 featureCounts /usr/local/bin/featureCounts && \
+    strip /usr/local/bin/featureCounts && \
+    rm -rf /tmp/*
+
+ENTRYPOINT ["featureCounts"]
+CMD ["-v"]
+
