@@ -1,0 +1,19 @@
+# docker/Dockerfile.sratoolkit
+FROM debian:bullseye-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Instalar dependências e SRA Toolkit
+RUN apt-get update && apt-get install -y \
+        wget ca-certificates gzip \
+    && wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz -O /tmp/sratoolkit.tar.gz \
+    && tar -xzf /tmp/sratoolkit.tar.gz -C /opt \
+    && ln -s /opt/sratoolkit.*-ubuntu64/bin/* /usr/local/bin/ \
+    && rm -rf /tmp/* /var/lib/apt/lists/*
+
+# Teste simples
+RUN fasterq-dump --version
+
+WORKDIR /data
+CMD ["/bin/bash"]
+
