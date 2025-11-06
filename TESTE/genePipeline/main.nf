@@ -1,34 +1,32 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl = 2
 
-params.sra_ids = ['SRR10379721', 'SRR10379722', 'SRR10379723', 'SRR10379724', 'SRR10379725', 'SRR10379726']
-
-
 Channel
-	.fromList(params.sra_ids)
-	.set { sra_ids_ch }
+    .fromList(['SRR000073', 'SRR000074', 'SRR000075'])
+    .set { sra_ids_ch }
 
+sudo apt update
+sudo apt install sra-toolkit
 
-process download_and_gzip_fastq {
-    tag { sra_id }
-    container = "build('./Dockerfile.sratoolkit')"
-    
+process get_fastq {
+    tag "$sra_id"
+    publishDir "data"
+
     input:
-    val sra_id from sra_ids_ch
+    val sra_id
 
     output:
-    file "${sra_id}.fastq.gz" into fastq_ch
+    path "${sra_id}.fastq.gz" into sra_ids_ch
 
     script:
     """
-    fasterq-dump --threads 1 --progress ${sra_id}
-    gzip ${sra_id}.fastq
+    fasterq-dump --threads 4 --progress ${sra_id}
+    gzip *.fastq
     """
 }
 
 process trim_reads {
     tag { reads.simpleName }
-    container = "build('./Dockerfile.catadapt')"
     publishDir "results/trimming", mode: 'copy'
 
     input:
@@ -46,7 +44,7 @@ process trim_reads {
 
 
 process get_reference {
-    container = build('./Dockerfile.bowtie') 
+ 
     output:
     file 'reference.fasta'
     file 'reference.gff'
@@ -59,7 +57,7 @@ process get_reference {
 
 
 process build_index {
-    container = build('./Dockerfile.bowtie')
+    
     input:
     file fasta from get_reference.out.filter{ it.name.endsWith('.fasta') }
     output:
@@ -72,9 +70,6 @@ process build_index {
 
 
 workflow {
-    download_and_gzip_fastq()
-    trim_reads()
-   # reference_files = get_reference()
-   # index_files = buid_index(reference_files)
+    sra_ids_ch | get_fastq
+    
 }
-
