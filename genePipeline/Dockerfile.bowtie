@@ -1,6 +1,7 @@
 FROM debian:stretch-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Configura repositórios "archive" do stretch e instala pacotes necessários
 RUN printf 'Acquire::Check-Valid-Until "false";\nAcquire::AllowInsecureRepositories "true";\n' \
       > /etc/apt/apt.conf.d/99archive && \
     printf 'deb http://archive.debian.org/debian stretch main contrib non-free\n' \
@@ -8,13 +9,24 @@ RUN printf 'Acquire::Check-Valid-Until "false";\nAcquire::AllowInsecureRepositor
     printf 'deb http://archive.debian.org/debian-security stretch/updates main contrib non-free\n' \
       >> /etc/apt/sources.list && \
     apt-get -o Acquire::Check-Valid-Until=false -o Acquire::AllowInsecureRepositories=true update && \
-    apt-get install -y --no-install-recommends wget unzip ca-certificates && \
-    wget -O /tmp/bowtie.zip \
+    apt-get install -y --no-install-recommends \
+        wget \
+        unzip \
+        ca-certificates \
+        procps \
+        samtools \
+        gzip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Instala Bowtie 0.12.7 (binário oficial)
+RUN wget -O /tmp/bowtie.zip \
       "https://downloads.sourceforge.net/project/bowtie-bio/bowtie/0.12.7/bowtie-0.12.7-linux-x86_64.zip" && \
     unzip /tmp/bowtie.zip -d /opt && \
     ln -s /opt/bowtie-0.12.7/bowtie* /usr/local/bin/ && \
-    rm -rf /tmp/* /var/lib/apt/lists/*
+    rm -rf /tmp/*
 
-ENTRYPOINT ["bowtie"]
-CMD ["--help"]
+WORKDIR /data
 
+# Sem ENTRYPOINT: deixa o Nextflow usar /bin/bash -c ".command.run"
+CMD ["/bin/bash"]
