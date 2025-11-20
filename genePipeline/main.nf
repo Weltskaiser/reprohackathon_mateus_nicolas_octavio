@@ -39,7 +39,8 @@ process trim_reads {
     script:
     """
     cutadapt --version > cutadapt_version.txt
-    trim_galore -q 20 --phred33 --length 25 --basename ${fastq_file.baseName} ${fa>    """
+    trim_galore -q 20 --phred33 --length 25 --basename ${fastq_file.baseName} ${fastq_file}
+    """
 }
 
 
@@ -62,7 +63,7 @@ process get_reference {
 
 process build_index {
 
-    container 'bowtie2'   // nome da imagem que você construiu
+    container 'bowtie'   // nome da imagem que você construiu
     cpus 1
 
     input:
