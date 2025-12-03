@@ -6,6 +6,7 @@ Channel
     // fast workflow try with small files:
     //.fromList(['SRR000073', 'SRR000074', 'SRR000075'])
     .set { sra_ids_ch }
+def CONTROL_IDS = ['SRR10379724','SRR10379725','SRR10379726']
 
 Channel
     .fromPath('GeneSpecificInformation_NCTC8325.xlsx')
@@ -15,10 +16,7 @@ Channel
     .fromPath('differential_analysis/differential_analysis.R')
     .set { analysis_script_ch }
 
-
-def CONTROL_IDS = ['SRR10379724','SRR10379725','SRR10379726']
-
-
+// Download FASTQ files
 process get_fastq {
     tag "$sra_id"
     publishDir "data/raw_fastq/", mode: 'copy'
@@ -35,6 +33,8 @@ process get_fastq {
     gzip ${sra_id}.fastq
     """
 }
+
+// Trim reads
 process trim_reads {
     publishDir "data/trimmed_fastq/", mode: 'copy'
 
@@ -51,6 +51,8 @@ process trim_reads {
     trim_galore --cores ${task.cpus} -q 20 --phred33 --length 25 --basename ${fastq.baseName} ${fastq}
     """
 }
+
+// Download reference genome and reference genome annotations
 process get_reference {
     publishDir "data/ref/", mode: 'copy'
 
@@ -64,6 +66,8 @@ process get_reference {
     wget -O reference.gff "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&id=CP000253.1&report=gff3&retmode=text"
     """
 }
+
+// Create genome index
 process build_index {
     publishDir "data/reference_index/", mode: 'copy'
 
@@ -78,6 +82,8 @@ process build_index {
     bowtie-build ${fasta} reference_index
     """
 }
+
+// Map FASTQ files
 process mapping {
     publishDir "data/map/", mode: 'copy'
 
@@ -98,6 +104,8 @@ process mapping {
     samtools index ${fastq_gz.simpleName}.sorted.bam
     """
 }
+
+// Count reads
 process feature_counts {
     publishDir "data/counts/", mode: 'copy'
 
@@ -114,13 +122,13 @@ process feature_counts {
     """
 }
 
+// Create control table
 process create_control_table {
-
     publishDir "data/coldata/", mode: 'copy'
 
     input:
-    path bam_files      // lista de BAMs (vem de all_bams_ch)
-    val  control_ids    // vetor com SRRs de controle (vem de CONTROL_IDS)
+    path bam_files
+    val  control_ids
 
     output:
     path "coldata.txt", emit: coldata_ch
@@ -162,9 +170,8 @@ process create_control_table {
     """
 }
 
-
+// Differential analysis
 process stat_analysis {
-
     publishDir "results/deseq2", mode: 'copy', overwrite: true
 
     input:
@@ -193,13 +200,12 @@ process stat_analysis {
     """
 }
 
-
+// Workflow
 workflow {
     get_fastq(sra_ids_ch)
     trim_reads(get_fastq.out.fastq_gz_ch)
     get_reference()
     build_index(get_reference.out.reference_fasta_ch)
-    index_ch = build_index.out.index_ch
     mapping(build_index.out.index_ch, trim_reads.out.trimmed_ch)
     mapping.out.bam_ch.collect() | set { all_bams_ch }
     feature_counts(get_reference.out.reference_gff_ch, all_bams_ch)

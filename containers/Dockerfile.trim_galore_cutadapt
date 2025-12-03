@@ -1,14 +1,17 @@
+# Choice of a OS compatible with the targeted version of cutadapt for trim_galore
 FROM debian:stretch-slim
-
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Fix archived repositories (Stretch is EOL)
-RUN echo 'Acquire::Check-Valid-Until "false";\nAcquire::AllowInsecureRepositories "true";' \
-    > /etc/apt/apt.conf.d/99ignore-valid-until && \
-    echo 'deb http://archive.debian.org/debian stretch main contrib non-free' > /etc/apt/sources.list && \
-    echo 'deb http://archive.debian.org/debian-security stretch/updates main contrib non-free' >> /etc/apt/sources.list
+RUN printf 'Acquire::Check-Valid-Until "false";\nAcquire::AllowInsecureRepositories "true";\n' \
+      > /etc/apt/apt.conf.d/99archive && \
+    printf 'deb http://archive.debian.org/debian stretch main contrib non-free\n' \
+      > /etc/apt/sources.list && \
+    printf 'deb http://archive.debian.org/debian-security stretch/updates main contrib non-free\n' \
+      >> /etc/apt/sources.list && \
+    apt-get -o Acquire::Check-Valid-Until=false -o Acquire::AllowInsecureRepositories=true update
 
-# Update and install ALL required dependencies
+# Update and install required dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         python3.5 python3.5-dev python3-pip \
@@ -18,19 +21,20 @@ RUN apt-get update && \
         fastqc \
         pigz \
         openjdk-8-jre-headless && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install exact old pip versions required by cutadapt 1.11
+# Install old pip version required by cutadapt 1.11
 RUN python3.5 -m pip install --upgrade \
         "pip==20.3.4" \
         "setuptools<50" \
         wheel \
         "cython<0.29"
 
-# Install Cutadapt 1.11
+# Install cutadapt 1.11
 RUN python3.5 -m pip install "cutadapt==1.11"
 
-# Install Trim Galore 0.6.7 properly
+# Install trim_galore 0.6.7
 WORKDIR /opt
 RUN wget https://github.com/FelixKrueger/TrimGalore/archive/0.6.7.zip && \
     unzip 0.6.7.zip && \
@@ -43,8 +47,8 @@ RUN which cutadapt && cutadapt --version && \
     which trim_galore && trim_galore --version
 
 # Cleanup
-WORKDIR /
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENTRYPOINT ["cutadapt"]
-
+CMD ["--version"]
