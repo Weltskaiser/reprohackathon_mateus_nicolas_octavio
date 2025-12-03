@@ -1,7 +1,0 @@
-samples condition
-SRR10379721 treatment
-SRR10379724 control
-SRR10379723 treatment
-SRR10379722 treatment
-SRR10379725 control
-SRR10379726 control
