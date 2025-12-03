@@ -1,0 +1,13 @@
+# Dockerfile - fasterq-dump via sra-toolkit
+
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Installation des dépendences nécessaires
+RUN apt-get update
+RUN apt-get install -y sra-toolkit && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT ["fasterq-dump"]
+CMD ["--help"]
