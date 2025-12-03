@@ -3,7 +3,8 @@ nextflow.enable.dsl = 2
 
 Channel
     .fromList(['SRR10379721','SRR10379722','SRR10379723','SRR10379724','SRR10379725','SRR10379726'])
-    //.fromList(['SRR10379721','SRR10379722','SRR10379723','SRR10379724','SRR10379725','SRR10379726','SRR000073', 'SRR000074', 'SRR000075'])
+    // fast workflow try with small files:
+    //.fromList(['SRR000073', 'SRR000074', 'SRR000075'])
     .set { sra_ids_ch }
 
 Channel
