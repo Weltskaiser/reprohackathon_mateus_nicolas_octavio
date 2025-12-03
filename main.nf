@@ -11,7 +11,7 @@ Channel
     .set { geneDB_ch }
 
 Channel
-    .fromPath('AnalysisScript.R')
+    .fromPath('differential_analysis/differential_analysis.R')
     .set { analysis_script_ch }
 
 
