@@ -2,7 +2,7 @@
 Before starting, ensure you are using a machine with:
 
  - 16+ CPUs
- - 32 GB RAM
+ - 64 GB RAM
  - 200 GB available storage
 
 🔧 Step 1 — Clone the Repository
