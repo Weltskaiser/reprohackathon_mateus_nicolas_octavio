@@ -1,0 +1,115 @@
+{
+  "sao03010": [
+    {
+      "ENTRY": "sao03010",
+      "NAME": "Ribosome - Staphylococcus aureus subsp. aureus NCTC8325",
+      "CLASS": "Genetic Information Processing; Translation",
+      "PATHWAY_MAP": "Ribosome",
+      "DBLINKS": "PDB: 1FFK 1J5E 4V4A 4YBB 4V6U 4V6X 4UG0 4V88 3A1Y",
+      "ORGANISM": "NA  Staphylococcus aureus subsp. aureus NCTC8325 [GN:sao]",
+      "GENE": ["SAOUHSC_00017", "rplI; 50S ribosomal protein L9 [KO:K02939]", "SAOUHSC_00348", "rpsF; 30S ribosomal protein S6 [KO:K02990]", "SAOUHSC_00350", "rpsR; 30S ribosomal protein S18 [KO:K02963]", "SAOUHSC_00474", "[KO:K02897]", "SAOUHSC_00518", "rplK; 50S ribosomal protein L11 [KO:K02867]", "SAOUHSC_00519", "rplA; 50S ribosomal protein L1 [KO:K02863]", "SAOUHSC_00520", "rplJ; 50S ribosomal protein L10 [KO:K02864]", "SAOUHSC_00521", "rplL; 50S ribosomal protein L7/L12 [KO:K02935]", "SAOUHSC_00526", "[KO:K07590]", "SAOUHSC_00527", "rpsL; 30S ribosomal protein S12 [KO:K02950]", "SAOUHSC_00528", "[KO:K02992]", "SAOUHSC_01191", "rpmB; 50S ribosomal protein L28 [KO:K02902]", "SAOUHSC_01208", "rpsP; 30S ribosomal protein S16 [KO:K02959]", "SAOUHSC_01211", "rplS; 50S ribosomal protein L19 [KO:K02884]", "SAOUHSC_01250", "rpsO; 30S ribosomal protein S15 [KO:K02956]", "SAOUHSC_01328", "rpmG; 50S ribosomal protein L33 [KO:K02913]", "SAOUHSC_01329", "rpsN; 30S ribosomal protein S14 [KO:K02954]", "SAOUHSC_01493", "rpsA; 30S ribosomal protein S1 [KO:K02945]", "SAOUHSC_01651", "rpmG; 50S ribosomal protein L33 [KO:K02913]", "SAOUHSC_01678", "rpsU; 30S ribosomal protein S21 [KO:K02970]", "SAOUHSC_01689", "rpsT; 30S ribosomal protein S20 [KO:K02968]", "SAOUHSC_01755", "rpmA; 50S ribosomal protein L27 [KO:K02899]", "SAOUHSC_01757", "rplU; 50S ribosomal protein L21 [KO:K02888]", "SAOUHSC_01784", "rplT; 50S ribosomal protein L20 [KO:K02887]", "SAOUHSC_01785", "rpmI; 50S ribosomal protein L35 [KO:K02916]", "SAOUHSC_01829", "rpsD; 30S ribosomal protein S4 [KO:K02986]", "SAOUHSC_02361", "rpmE2; 50S ribosomal protein L31 type B [KO:K02909]", "SAOUHSC_02477", "rpsI; 30S ribosomal protein S9 [KO:K02996]", "SAOUHSC_02478", "rplM; 50S ribosomal protein L13 [KO:K02871]", "SAOUHSC_02484", "rplQ; 50S ribosomal protein L17 [KO:K02879]", "SAOUHSC_02486", "[KO:K02948]", "SAOUHSC_02487", "rpsM; 30S ribosomal protein S13 [KO:K02952]", "SAOUHSC_02488", "rpmJ; 50S ribosomal protein L36 [KO:K02919]", "SAOUHSC_02492", "rplO; 50S ribosomal protein L15 [KO:K02876]", "SAOUHSC_02493", "rpmD; 50S ribosomal protein L30 [KO:K02907]", "SAOUHSC_02494", "rpsE; 30S ribosomal protein S5 [KO:K02988]", "SAOUHSC_02495", "rplR; 50S ribosomal protein L18 [KO:K02881]", "SAOUHSC_02496", "rplF; 50S ribosomal protein L6 [KO:K02933]", "SAOUHSC_02498", "rpsH; 30S ribosomal protein S8 [KO:K02994]", "SAOUHSC_02499", "rpsN; 30S ribosomal protein S14 [KO:K02954]", "SAOUHSC_02500", "rplE; 50S ribosomal protein L5 [KO:K02931]", "SAOUHSC_02501", "rplX; 50S ribosomal protein L24 [KO:K02895]", "SAOUHSC_02502", "rplN; 50S ribosomal protein L14 [KO:K02874]", "SAOUHSC_02503", "rpsQ; 30S ribosomal protein S17 [KO:K02961]", "SAOUHSC_02504", "[KO:K02904]", "SAOUHSC_02505", "rplP; 50S ribosomal protein L16 [KO:K02878]", "SAOUHSC_02506", "rpsC; 30S ribosomal protein S3 [KO:K02982]", "SAOUHSC_02507", "rplV; 50S ribosomal protein L22 [KO:K02890]", "SAOUHSC_02508", "rpsS; 30S ribosomal protein S19 [KO:K02965]", "SAOUHSC_02509", "rplB; 50S ribosomal protein L2 [KO:K02886]", "SAOUHSC_02510", "rplW; 50S ribosomal protein L23 [KO:K02892]", "SAOUHSC_02511", "rplD; 50S ribosomal protein L4 [KO:K02926]", "SAOUHSC_02512", "rplC; 50S ribosomal protein L3 [KO:K02906]", "SAOUHSC_02512a", "[KO:K02946]", "SAOUHSC_03055", "rpmH; 50S ribosomal protein L34 [KO:K02914]", "SAOUHSC_R0001", "[KO:K01977]", "SAOUHSC_R00010", "[KO:K01980]", "SAOUHSC_R00011", "[KO:K01985]", "SAOUHSC_R00012", "[KO:K01985]", "SAOUHSC_R00013", "[KO:K01985]", "SAOUHSC_R00014", "[KO:K01985]", "SAOUHSC_R00015", "[KO:K01985]", "SAOUHSC_R00016", "[KO:K01985]", "SAOUHSC_R0002", "[KO:K01977]", "SAOUHSC_R0003", "[KO:K01977]", "SAOUHSC_R0004", "[KO:K01977]", "SAOUHSC_R0005", "[KO:K01977]", "SAOUHSC_R0006", "[KO:K01980]", "SAOUHSC_R0007", "[KO:K01980]", "SAOUHSC_R0008", "[KO:K01980]", "SAOUHSC_R0009", "[KO:K01980]"],
+      "KO_PATHWAY": "ko03010",
+      "REFERENCE": [
+        {
+          "REFERENCE": "PMID:10476961",
+          "AUTHORS": "Ban N, Nissen P, Hansen J, Capel M, Moore PB, Steitz TA.",
+          "TITLE": "Placement of protein and RNA structures into a 5 A-resolution map of the 50S ribosomal subunit.",
+          "JOURNAL": ["Nature 400:841-847 (1999)", "DOI:10.1038/23641"]
+        },
+        {
+          "REFERENCE": "PMID:10476960",
+          "AUTHORS": "Clemons WM Jr, May JL, Wimberly BT, McCutcheon JP, Capel MS, Ramakrishnan V.",
+          "TITLE": "Structure of a bacterial 30S ribosomal subunit at 5.5 A resolution.",
+          "JOURNAL": ["Nature 400:833-840 (1999)", "DOI:10.1038/23631"]
+        },
+        {
+          "REFERENCE": "PMID:10497122",
+          "AUTHORS": "Cate JH, Yusupov MM, Yusupova GZ, Earnest TN, Noller HF.",
+          "TITLE": "X-ray crystal structures of 70S ribosome functional complexes.",
+          "JOURNAL": ["Science 285:2095-2104 (1999)", "DOI:10.1126/science.285.5436.2095"]
+        },
+        {
+          "REFERENCE": "PMID:10937989",
+          "AUTHORS": "Ban N, Nissen P, Hansen J, Moore PB, Steitz TA.",
+          "TITLE": "The complete atomic structure of the large ribosomal subunit at 2.4 A resolution.",
+          "JOURNAL": ["Science 289:905-920 (2000)", "DOI:10.1126/science.289.5481.905"]
+        },
+        {
+          "REFERENCE": "PMID:10937990",
+          "AUTHORS": "Nissen P, Hansen J, Ban N, Moore PB, Steitz TA.",
+          "TITLE": "The structural basis of ribosome activity in peptide bond synthesis.",
+          "JOURNAL": ["Science 289:920-930 (2000)", "DOI:10.1126/science.289.5481.920"]
+        },
+        {
+          "REFERENCE": "PMID:11014182",
+          "AUTHORS": "Wimberly BT, Brodersen DE, Clemons WM Jr, Morgan-Warren RJ, Carter AP, Vonrhein C, Hartsch T, Ramakrishnan V.",
+          "TITLE": "Structure of the 30S ribosomal subunit.",
+          "JOURNAL": ["Nature 407:327-339 (2000)", "DOI:10.1038/35030006"]
+        },
+        {
+          "REFERENCE": "PMID:11014183",
+          "AUTHORS": "Carter AP, Clemons WM, Brodersen DE, Morgan-Warren RJ, Wimberly BT, Ramakrishnan V.",
+          "TITLE": "Functional insights from the structure of the 30S ribosomal subunit and its interactions with antibiotics.",
+          "JOURNAL": ["Nature 407:340-348 (2000)", "DOI:10.1038/35030019"]
+        },
+        {
+          "REFERENCE": "PMID:25775265",
+          "AUTHORS": "Noeske J, Wasserman MR, Terry DS, Altman RB, Blanchard SC, Cate JH",
+          "TITLE": "High-resolution structure of the Escherichia coli ribosome.",
+          "JOURNAL": ["Nat Struct Mol Biol 22:336-41 (2015)", "DOI:10.1038/nsmb.2994"]
+        },
+        {
+          "REFERENCE": "PMID:23222135",
+          "AUTHORS": "Armache JP, Anger AM, Marquez V, Franckenberg S, Frohlich T, Villa E, Berninghausen O, Thomm M, Arnold GJ, Beckmann R, Wilson DN",
+          "TITLE": "Promiscuous behaviour of archaeal ribosomal proteins: implications for eukaryotic ribosome evolution.",
+          "JOURNAL": ["Nucleic Acids Res 41:1284-93 (2013)", "DOI:10.1093/nar/gks1259"]
+        },
+        {
+          "REFERENCE": "PMID:23636399",
+          "AUTHORS": "Anger AM, Armache JP, Berninghausen O, Habeck M, Subklewe M, Wilson DN, Beckmann R",
+          "TITLE": "Structures of the human and Drosophila 80S ribosome.",
+          "JOURNAL": ["Nature 497:80-5 (2013)", "DOI:10.1038/nature12104"]
+        },
+        {
+          "REFERENCE": "PMID:25901680",
+          "AUTHORS": "Khatter H, Myasnikov AG, Natchiar SK, Klaholz BP",
+          "TITLE": "Structure of the human 80S ribosome.",
+          "JOURNAL": ["Nature 520:640-5 (2015)", "DOI:10.1038/nature14427"]
+        },
+        {
+          "REFERENCE": "PMID:20007716",
+          "AUTHORS": "Naganuma T, Nomura N, Yao M, Mochizuki M, Uchiumi T, Tanaka I",
+          "TITLE": "Structural basis for translation factor recruitment to the eukaryotic/archaeal ribosomes.",
+          "JOURNAL": ["J Biol Chem 285:4747-56 (2010)", "DOI:10.1074/jbc.M109.068098"]
+        }
+      ]
+    }
+  ],
+  "sao00970": [
+    {
+      "ENTRY": "sao00970",
+      "NAME": "Aminoacyl-tRNA biosynthesis - Staphylococcus aureus subsp. aureus NCTC8325",
+      "CLASS": "Genetic Information Processing; Translation",
+      "PATHWAY_MAP": "Aminoacyl-tRNA biosynthesis",
+      "ORGANISM": "NA  Staphylococcus aureus subsp. aureus NCTC8325 [GN:sao]",
+      "GENE": ["SAOUHSC_00009", "[KO:K01875] [EC:6.1.1.11]", "SAOUHSC_00461", "[KO:K01874] [EC:6.1.1.10]", "SAOUHSC_00493", "lysS; lysyl-tRNA synthetase [KO:K04567] [EC:6.1.1.6]", "SAOUHSC_00509", "gltX; glutamyl-tRNA synthetase [KO:K09698] [EC:6.1.1.24]", "SAOUHSC_00511", "cysS; cysteinyl-tRNA synthetase [KO:K01883] [EC:6.1.1.16]", "SAOUHSC_00611", "argS; arginyl-tRNA synthetase [KO:K01887] [EC:6.1.1.19]", "SAOUHSC_00933", "[KO:K01867] [EC:6.1.1.2]", "SAOUHSC_01092", "pheS; phenylalanyl-tRNA synthetase subunit alpha [KO:K01889] [EC:6.1.1.20]", "SAOUHSC_01093", "pheT; phenylalanyl-tRNA synthetase subunit beta [KO:K01890] [EC:6.1.1.20]", "SAOUHSC_01159", "ileS; isoleucyl-tRNA synthetase [KO:K01870] [EC:6.1.1.5]", "SAOUHSC_01183", "[KO:K00604] [EC:2.1.2.9]", "SAOUHSC_01240", "[KO:K01881] [EC:6.1.1.15]", "SAOUHSC_01471", "asnC; asparaginyl-tRNA synthetase [KO:K01893] [EC:6.1.1.22]", "SAOUHSC_01666", "[KO:K01880] [EC:6.1.1.14]", "SAOUHSC_01722", "alaS; alanyl-tRNA synthetase [KO:K01872] [EC:6.1.1.7]", "SAOUHSC_01737", "aspS; aspartyl-tRNA synthetase [KO:K01876] [EC:6.1.1.12]", "SAOUHSC_01738", "hisS; histidyl-tRNA synthetase [KO:K01892] [EC:6.1.1.21]", "SAOUHSC_01767", "valS; valyl-tRNA synthetase [KO:K01873] [EC:6.1.1.9]", "SAOUHSC_01788", "thrS; threonyl-tRNA synthetase [KO:K01868] [EC:6.1.1.3]", "SAOUHSC_01839", "[KO:K01866] [EC:6.1.1.1]", "SAOUHSC_01875", "leuS; leucyl-tRNA synthetase [KO:K01869] [EC:6.1.1.4]", "SAOUHSC_02116", "gatB; aspartyl/glutamyl-tRNA amidotransferase subunit B [KO:K02434] [EC:6.3.5.6 6.3.5.7]", "SAOUHSC_02117", "gatA; aspartyl/glutamyl-tRNA amidotransferase subunit A [KO:K02433] [EC:6.3.5.6 6.3.5.7]", "SAOUHSC_02118", "gatC; aspartyl/glutamyl-tRNA amidotransferase subunit C [KO:K02435] [EC:6.3.5.6 6.3.5.7]", "SAOUHSC_T0001", "[KO:K14218]", "SAOUHSC_T00010", "[KO:K14220]", "SAOUHSC_T00011", "[KO:K14221]", "SAOUHSC_T00012", "[KO:K14221]", "SAOUHSC_T00013", "[KO:K14221]", "SAOUHSC_T00014", "[KO:K14221]", "SAOUHSC_T00015", "[KO:K14222]", "SAOUHSC_T00016", "[KO:K14223]", "SAOUHSC_T00017", "[KO:K14223]", "SAOUHSC_T00018", "[KO:K14224]", "SAOUHSC_T00019", "[KO:K14224]", "SAOUHSC_T0002", "[KO:K14218]", "SAOUHSC_T00020", "[KO:K14224]", "SAOUHSC_T00021", "[KO:K14225]", "SAOUHSC_T00022", "[KO:K14225]", "SAOUHSC_T00023", "[KO:K14225]", "SAOUHSC_T00024", "[KO:K14225]", "SAOUHSC_T00025", "[KO:K14225]", "SAOUHSC_T00026", "[KO:K14226]", "SAOUHSC_T00027", "[KO:K14226]", "SAOUHSC_T00028", "[KO:K14227]", "SAOUHSC_T00029", "[KO:K14227]", "SAOUHSC_T0003", "[KO:K14218]", "SAOUHSC_T00030", "[KO:K14228]", "SAOUHSC_T00031", "[KO:K14228]", "SAOUHSC_T00032", "[KO:K14228]", "SAOUHSC_T00033", "[KO:K14228]", "SAOUHSC_T00034", "[KO:K14228]", "SAOUHSC_T00035", "[KO:K14229]", "SAOUHSC_T00036", "[KO:K14229]", "SAOUHSC_T00037", "[KO:K14229]", "SAOUHSC_T00038", "[KO:K14230]", "SAOUHSC_T00039", "[KO:K14230]", "SAOUHSC_T0004", "[KO:K14219]", "SAOUHSC_T00040", "[KO:K14230]", "SAOUHSC_T00041", "[KO:K14230]", "SAOUHSC_T00042", "[KO:K14231]", "SAOUHSC_T00043", "[KO:K14231]", "SAOUHSC_T00044", "[KO:K14232]", "SAOUHSC_T00045", "[KO:K14232]", "SAOUHSC_T00046", "[KO:K14225]", "SAOUHSC_T00047", "[KO:K14225]", "SAOUHSC_T00048", "[KO:K14233]", "SAOUHSC_T00049", "[KO:K14233]", "SAOUHSC_T0005", "[KO:K14219]", "SAOUHSC_T00050", "[KO:K14233]", "SAOUHSC_T00051", "[KO:K14233]", "SAOUHSC_T00052", "[KO:K14233]", "SAOUHSC_T00053", "[KO:K14234]", "SAOUHSC_T00054", "[KO:K14234]", "SAOUHSC_T00055", "[KO:K14234]", "SAOUHSC_T00056", "[KO:K14235]", "SAOUHSC_T00057", "[KO:K14236]", "SAOUHSC_T00058", "[KO:K14236]", "SAOUHSC_T00059", "[KO:K14237]", "SAOUHSC_T0006", "[KO:K14219]", "SAOUHSC_T00060", "[KO:K14237]", "SAOUHSC_T00061", "[KO:K14237]", "SAOUHSC_T0007", "[KO:K14219]", "SAOUHSC_T0008", "[KO:K14220]", "SAOUHSC_T0009", "[KO:K14220]"],
+      "COMPOUND": ["L-Glutamate", "Glycine", "L-Alanine", "L-Lysine", "L-Aspartate", "L-Arginine", "L-Glutamine", "L-Serine", "L-Methionine", "L-Tryptophan", "L-Phenylalanine", "L-Tyrosine", "L-Cysteine", "Tetrahydrofolate", "L-Leucine", "L-Histidine", "L-Proline", "L-Asparagine", "L-Valine", "L-Threonine", "10-Formyltetrahydrofolate", "L-Isoleucine", "L-Alanyl-tRNA", "O-Phospho-L-serine", "L-Lysyl-tRNA", "L-Leucyl-tRNA", "L-Arginyl-tRNA(Arg)", "Glutaminyl-tRNA", "Glycyl-tRNA(Gly)", "L-Methionyl-tRNA", "L-Seryl-tRNA(Ser)", "L-Valyl-tRNA(Val)", "L-Prolyl-tRNA(Pro)", "L-Tyrosyl-tRNA(Tyr)", "L-Aspartyl-tRNA(Asp)", "L-Glutamyl-tRNA(Glu)", "L-Histidyl-tRNA(His)", "L-Threonyl-tRNA(Thr)", "L-Cysteinyl-tRNA(Cys)", "L-Isoleucyl-tRNA(Ile)", "N-Formylmethionyl-tRNA", "L-Asparaginyl-tRNA(Asn)", "L-Phenylalanyl-tRNA(Phe)", "L-Tryptophanyl-tRNA(Trp)", "L-Glutamyl-tRNA(Gln)", "L-Aspartyl-tRNA(Asn)", "L-Seryl-tRNA(Sec)", "L-Selenocysteinyl-tRNA(Sec)", "L-Pyrrolysine", "O-Phosphoseryl-tRNA(Sec)", "O-Phosphoseryl-tRNA(Cys)", "L-Pyrrolysyl-tRNA(Pyl)"],
+      "REL_PATHWAY": ["Alanine, aspartate and glutamate metabolism", "Glycine, serine and threonine metabolism", "Cysteine and methionine metabolism", "Valine, leucine and isoleucine biosynthesis", "Lysine biosynthesis", "Arginine and proline metabolism", "Histidine metabolism", "Tryptophan metabolism", "Phenylalanine, tyrosine and tryptophan biosynthesis"],
+      "KO_PATHWAY": "ko00970",
+      "REFERENCE": [
+        {
+          "REFERENCE": "PMID:18252769",
+          "AUTHORS": "Sheppard K, Yuan J, Hohn MJ, Jester B, Devine KM, Soll D",
+          "TITLE": "From one amino acid to another: tRNA-dependent amino acid biosynthesis.",
+          "JOURNAL": ["Nucleic Acids Res 36:1813-25 (2008)", "DOI:10.1093/nar/gkn015"]
+        },
+        {
+          "REFERENCE": "PMID:15314242",
+          "AUTHORS": "Polycarpo C, Ambrogelly A, Berube A, Winbush SM, McCloskey JA, Crain PF, Wood JL, Soll D",
+          "TITLE": "An aminoacyl-tRNA synthetase that specifically activates pyrrolysine.",
+          "JOURNAL": ["Proc Natl Acad Sci U S A 101:12450-4 (2004)", "DOI:10.1073/pnas.0405362101"]
+        }
+      ]
+    }
+  ]
+}

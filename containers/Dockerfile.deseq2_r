@@ -42,6 +42,7 @@ RUN apt-get clean && \
 # Install R dependencies and other packages
 RUN R -e "install.packages(c('tidyverse','ggrepel', 'pheatmap', 'Cairo') , repos = 'https://packagemanager.posit.co/cran/__linux__/focal/2018-01-11')"
 RUN R -e "install.packages('readxl', repos = 'https://packagemanager.posit.co/cran/__linux__/focal/2018-01-11')"
+RUN R -e "install.packages('jsonlite', repos = 'https://packagemanager.posit.co/cran/__linux__/focal/2018-01-11')"
 RUN R -e "install.packages('Rgraphviz/', repos = NULL, type='source')" && rm -rf Rgraphviz
 
 # Install BiocInstaller and use it to install the remaining dependencies and packages, plus DESeq2 1.16.1

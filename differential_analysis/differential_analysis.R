@@ -9,7 +9,7 @@ main_path <- getwd()   # ou: "/caminho/para/sua/pasta"
 
 # Arquivos de entrada (baixados da máquina virtual)
 count_table_path  <- file.path(main_path, "counts.txt")          # nome do seu counts
-coldata_file_path <- file.path(main_path, "coldata.txt")         # nome do seu coldata
+# coldata_file_path <- file.path(main_path, "coldata.txt")         # nome do seu coldata
 geneDB_path       <- file.path(main_path, "GeneSpecificInformation_NCTC8325.xlsx")
 
 # Arquivos de saída (vão ser criados nesse diretório)
@@ -29,7 +29,7 @@ library(dplyr)
 library(glue)
 library(readxl)
 library(ggplot2)
-library(KEGGREST)
+#library(KEGGREST)
 library(ggrepel)
 
 
@@ -39,7 +39,7 @@ library(ggrepel)
 # This function arranges the count table for the analysis
 
 formatation_table <- function(count_table, coldata) {
-  columns    <- colnames(count_table)    # 
+  columns    <- colnames(count_table)
   conditions <- unique(coldata$condition)    # Control or  treatment
   samples    <- rep("", length(coldata$condition))
 
@@ -68,7 +68,7 @@ formatation_table <- function(count_table, coldata) {
       }
     }
   }
-  
+
   # correction of the columns names: sample_columns -> final_columns
   table <- count_table[, c("Geneid", sample_columns)]
   names(table) <- c("Geneid", final_columns)
@@ -76,7 +76,7 @@ formatation_table <- function(count_table, coldata) {
 
   cols <- c("Geneid", samples)
   table <- table[, c(cols, setdiff(names(table), cols))]
-  
+
   # Update samples, output countdata + coldata
   coldata$samples <- samples
   output <- list("countdata" = table, "coldata" = coldata)
@@ -103,9 +103,17 @@ avoid_repetition_name <- function(data, column) {
 
 raw_count_table <- read.table(count_table_path, sep = "\t", header = TRUE, check.names = FALSE)
 
-coldata <- read.table(coldata_file_path, sep = " ", header = TRUE, check.names = FALSE)
-coldata$condition <- as.character(coldata$condition)
-coldata$samples   <- as.character(coldata$samples)
+#coldata <- read.table(coldata_file_path, sep = " ", header = TRUE, check.names = FALSE)
+#coldata$condition <- as.character(coldata$condition)
+#coldata$samples   <- as.character(coldata$samples)
+
+sample_id_l = c("SRR10379721", "SRR10379722", "SRR10379723", "SRR10379724", "SRR10379725", "SRR10379726")
+condition_l = c("treatment", "treatment", "treatment", "control", "control", "control")
+coldata <- data.frame(
+  samples   = sample_id_l,
+  condition = condition_l,
+  stringsAsFactors = FALSE
+)
 
 # Formatation of the count_table, and sync to coldata
 formatted <- formatation_table(raw_count_table, coldata)
@@ -201,6 +209,28 @@ res <- as.data.frame(subset(res, select = -color))
 res$conv_name <- gene_names
 write.csv(res, file = output_file_path, row.names = TRUE)
 
+
+##### FIN 1er MA PLOT #####
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #--------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------
 #TEST
@@ -220,20 +250,24 @@ res_df <- res
 #    sao03012 = translation factors
 # -----------------------------
 
+
+
+kegg_2_sao = fromJSON("kegg_2_sao.json")
+
 list_kegg <- c("sao03010", "sao00970")
 all_gene  <- list(ID = list(), NAME = list(), AA_tRNA = list())
 
-for (KEgg in list_kegg) {
-  gene_keg <- keggGet(KEgg)[[1]]
+for (kegg in list_kegg) {
+  gene_keg <- kegg_2_sao[[kegg]]
   genes_vec <- gene_keg$GENE  # vetor do tipo: ID1, desc1, ID2, desc2, ...
-  
+
   for (i in seq(1, length(genes_vec), by = 2)) {
     id   <- genes_vec[i]
     desc <- genes_vec[i + 1]
-    
+
     all_gene$ID   <- append(all_gene$ID,   id)
     all_gene$NAME <- append(all_gene$NAME, desc)
-    
+
     # Heurística: TRUE para genes que NÃO são pseudogene / tRNA / ribosomal
     is_aars <- str_detect(
       desc,
@@ -245,12 +279,12 @@ for (KEgg in list_kegg) {
       ),
       negate = TRUE
     )
-    
+
     all_gene$AA_tRNA <- append(all_gene$AA_tRNA, is_aars)
   }
 }
 
-# More genes 
+# More genes
 all_gene$ID      <- append(all_gene$ID,   "SAOUHSC_01203")
 all_gene$NAME    <- append(all_gene$NAME, "ribonuclease III")
 all_gene$AA_tRNA <- append(all_gene$AA_tRNA, FALSE)
@@ -262,7 +296,7 @@ all_gene$AA_tRNA <- append(all_gene$AA_tRNA, FALSE)
 tmp_file <- tempfile(fileext = ".keg")
 download.file("https://www.genome.jp/kegg-bin/download_htext?htext=sao03012", destfile = tmp_file, quiet = TRUE)
 
-# Read lines from KEGG files 
+# Read lines from KEGG files
 sao03012_raw <- readLines(tmp_file)
 
 # Fica só com linhas que tenham SAOUHSC_ (ids de genes)
@@ -295,90 +329,79 @@ if (nrow(res_trans) == 0) {
 } else {
   # Marca quais são AA-tRNA synthetases
   res_trans$AA_tRNA <- rownames(res_trans) %in% aars_ids
-}  
-  # -----------------------------
-  # 4) Preparar colunas para plot
-  # -----------------------------
-  
-  # Log2 da média (como na figura do artigo)
-  res_trans$log2BaseMean <- log2(res_trans$baseMean + 1)
-  
-  # Significância pelo padj
-  res_trans$Significance <- ifelse(
-    !is.na(res_trans$padj) & res_trans$padj <= 0.05,
-    "Significant",
-    "Non-Significant"
-  )
-  
-  # Genes a rotular explicitamente
-  genes_to_label <- c("frr", "infA", "tsf", "infC", "infB", "pth")
-  res_trans$id_label <- ifelse(
-    res_trans$conv_name %in% genes_to_label,
-    res_trans$conv_name,
-    ""
-  )
-  
-  # -----------------------------
-  # 5) MA-plot de tradução
-  # -----------------------------
-  
-  p_trans <- ggplot(res_trans) +
-    geom_point(aes(x= log2BaseMean,y= log2FoldChange,fill= Significance, color= AA_tRNA),
-      size   = 3,
-      shape  = 21,
-      stroke = 0
-    ) +
-    scale_fill_manual(
-      values = c(
-        "Significant"     = "red",
-        "Non-Significant" = "black"
-      )
-    ) +
-    scale_color_manual(
-      values = c(
-        "TRUE"  = "black"  # AA-tRNA synthetases
-      )
-    ) +
-    geom_text_repel(
-      aes(
-        x     = log2BaseMean,
-        y     = log2FoldChange,
-        label = id_label
-      ),
-      show.legend  = FALSE,
-      size         = 6,
-      box.padding  = 0.4,
-      max.overlaps = 5000
-    ) +
-    geom_hline(yintercept = 0, linetype = "dashed") +
-    scale_y_continuous(breaks = seq(-5, 5, 1)) +
-    scale_x_continuous(breaks = seq(0, 20, 2)) +
-    labs(
-      x = "Log2 base Mean",
-      y = "Log2 Fold Change",
-      title = "MA-plot of translation-related genes (KEGG)"
-    ) +
-    theme_minimal()
-  
-  pdf(
-    file   = file.path(main_path, "MA_plot_translation.pdf"),
-    width  = 8,
-    height = 7,
-    family = "Helvetica",
-    useDingbats = FALSE
-  )
-  print(p_trans)
-  dev.off()
-  
-  message("MA_plot_translation.pdf salvo em: ", file.path(main_path, "MA_plot_translation.pdf"))
+}
+# -----------------------------
+# 4) Preparar colunas para plot
+# -----------------------------
 
+# Log2 da média (como na figura do artigo)
+res_trans$log2BaseMean <- log2(res_trans$baseMean + 1)
 
+# Significância pelo padj
+res_trans$Significance <- ifelse(
+  !is.na(res_trans$padj) & res_trans$padj <= 0.05,
+  "Significant",
+  "Non-Significant"
+)
 
+# Genes a rotular explicitamente
+genes_to_label <- c("frr", "infA", "tsf", "infC", "infB", "pth")
+res_trans$id_label <- ifelse(
+  res_trans$conv_name %in% genes_to_label,
+  res_trans$conv_name,
+  ""
+)
 
-#
-#
-#
-#
-#
+# -----------------------------
+# 5) MA-plot de tradução
+# -----------------------------
 
+p_trans <- ggplot(res_trans) +
+  geom_point(aes(x= log2BaseMean,y= log2FoldChange,fill= Significance, color= AA_tRNA),
+    size   = 3,
+    shape  = 21,
+    stroke = 0
+  ) +
+  scale_fill_manual(
+    values = c(
+      "Significant"     = "red",
+      "Non-Significant" = "black"
+    )
+  ) +
+  scale_color_manual(
+    values = c(
+      "TRUE"  = "black"  # AA-tRNA synthetases
+    )
+  ) +
+  geom_text_repel(
+    aes(
+      x     = log2BaseMean,
+      y     = log2FoldChange,
+      label = id_label
+    ),
+    show.legend  = FALSE,
+    size         = 6,
+    box.padding  = 0.4,
+    max.overlaps = 5000
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  scale_y_continuous(breaks = seq(-5, 5, 1)) +
+  scale_x_continuous(breaks = seq(0, 20, 2)) +
+  labs(
+    x = "Log2 base Mean",
+    y = "Log2 Fold Change",
+    title = "MA-plot of translation-related genes (KEGG)"
+  ) +
+  theme_minimal()
 
+pdf(
+  file   = file.path(main_path, "MA_plot_translation.pdf"),
+  width  = 8,
+  height = 7,
+  family = "Helvetica",
+  useDingbats = FALSE
+)
+print(p_trans)
+dev.off()
+
+message("MA_plot_translation.pdf salvo em: ", file.path(main_path, "MA_plot_translation.pdf"))
