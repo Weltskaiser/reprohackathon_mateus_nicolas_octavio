@@ -7,11 +7,23 @@ main_path <- getwd()   # ou: "/caminho/para/sua/pasta"
 # Input files
 count_table_path  <- file.path(main_path, "counts.txt")
 geneDB_path       <- file.path(main_path, "GeneSpecificInformation_NCTC8325.xlsx")
+# KEGG Orthology
+kegg_path         <- file.path(main_path, "kegg_2_sao.json")
 
 # Output files (will be created in the same directory)
 output_finalcountdata_path <- file.path(main_path, "deseq_input_countdata.csv")
-output_vst_path            <- file.path(main_path, "vst_table.csv")
-output_file_path           <- file.path(main_path, "deseq_results.csv")
+#output_vst_path            <- file.path(main_path, "vst_table.csv")
+output_deseq_results_path           <- file.path(main_path, "deseq_results.csv")
+
+#args <- commandArgs(trailingOnly = TRUE)
+#count_table_path              <- args[1]
+#geneDB_path                   <- args[2]
+#kegg_path                     <- args[3]
+#output_finalcountdata_path    <- args[4]
+##output_vst_path               <- args[5]
+#output_deseq_results_path     <- args[6]
+#main_path2                    <- args[7]
+
 
 # Packages loading
 library(DESeq2)
@@ -192,7 +204,7 @@ dev.off()
 # Export Results table
 res <- as.data.frame(subset(res, select = -color))
 res$conv_name <- gene_names
-write.csv(res, file = output_file_path, row.names = TRUE)
+write.csv(res, file = output_deseq_results_path, row.names = TRUE)
 
 
 
@@ -208,35 +220,34 @@ res_df <- res
 
 # We made an archive of the useful data from KEGG, in case it would change
 # Refer to get_kegg_2_sao.R to see how it has been built
-kegg_2_sao = fromJSON("kegg_2_sao.json")
+kegg_2_sao <- fromJSON(kegg_path)
 
 list_kegg <- c("sao03010", "sao00970")
-all_gene  <- list(ID = list(), NAME = list(), AA_tRNA = list())
+all_gene  <- list(ID = character(), NAME = character(), AA_tRNA = logical())
 
 for (kegg in list_kegg) {
   gene_keg <- kegg_2_sao[[kegg]]
-  genes_vec <- gene_keg$GENE  # Vector of type: ID1, desc1, ID2, desc2, ...
+  genes_vec <- gene_keg$GENE[[1]]  # Vector of type: ID1, desc1, ID2, desc2, ...
 
   for (i in seq(1, length(genes_vec), by = 2)) {
     id   <- genes_vec[i]
     desc <- genes_vec[i + 1]
 
-    all_gene$ID   <- append(all_gene$ID,   id)
-    all_gene$NAME <- append(all_gene$NAME, desc)
+    all_gene$ID   <- c(all_gene$ID,   id)
+    all_gene$NAME <- c(all_gene$NAME, desc)
 
     # Heuristic: TRUE for genes that are not pseudogenes / tRNA / ribosomal
-    is_aars <- str_detect(
+    is_aars <- !str_detect(
       desc,
       stringr::str_c(
         "\\b(",
         stringr::str_c(c("pseudogene", "tRNA-", "ribosomal", "Ribosomal"),
                        collapse = "|"),
         ")\\b"
-      ),
-      negate = TRUE
+      )
     )
 
-    all_gene$AA_tRNA <- append(all_gene$AA_tRNA, is_aars)
+    all_gene$AA_tRNA <- c(all_gene$AA_tRNA, is_aars)
   }
 }
 
@@ -313,18 +324,21 @@ p_trans <- ggplot(res_trans) +
   geom_point(aes(x= log2BaseMean,y= log2FoldChange,fill= Significance, color= AA_tRNA),
     size   = 3,
     shape  = 21,
-    stroke = 0
+    stroke = 1
   ) +
   scale_fill_manual(
     values = c(
       "Significant"     = "red",
-      "Non-Significant" = "black"
+      "Non-Significant" = "gray"
     )
   ) +
   scale_color_manual(
     values = c(
-      "TRUE"  = "black"  # AA-tRNA synthetases
-    )
+      "TRUE"  = "black",  # AA-tRNA synthetases
+      "FALSE" = "NA"      # Non-AA-tRNA synthetases
+    ),
+    labels = c("TRUE" = "AA-tRNA synthethases"),
+    breaks = "TRUE"
   ) +
   geom_text_repel(
     aes(
@@ -334,8 +348,7 @@ p_trans <- ggplot(res_trans) +
     ),
     show.legend  = FALSE,
     size         = 6,
-    box.padding  = 0.4,
-    max.overlaps = 5000
+    box.padding  = 0.4
   ) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_y_continuous(breaks = seq(-5, 5, 1)) +

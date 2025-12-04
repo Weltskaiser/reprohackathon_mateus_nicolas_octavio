@@ -8,12 +8,16 @@ Channel
     .set { sra_ids_ch }
 
 Channel
+    .fromPath('differential_analysis/differential_analysis.R')
+    .set { analysis_script_ch }
+
+Channel
     .fromPath('differential_analysis/GeneSpecificInformation_NCTC8325.xlsx')
     .set { geneDB_ch }
 
 Channel
-    .fromPath('differential_analysis/differential_analysis.R')
-    .set { analysis_script_ch }
+    .fromPath('differential_analysis/kegg_2_sao.json')
+    .set { kegg_ch }
 
 // Download FASTQ files
 process get_fastq {
@@ -126,13 +130,13 @@ process stat_analysis {
     publishDir "results/deseq2", mode: 'copy', overwrite: true
 
     input:
+    path analysis_script
     path count_table
     path geneDB_file
-    path analysis_script
+    path kegg
 
     output:
     path "deseq_input_countdata.csv"
-    path "vst_table.csv"
     path "deseq_results.csv"
     path "*.pdf"
 
@@ -140,12 +144,11 @@ process stat_analysis {
     """
     Rscript ${analysis_script} \
       "${count_table}" \
-      "deseq_input_countdata.csv" \
-      "vst_table.csv" \
-      "deseq_results.csv" \
       "${geneDB_file}" \
+      "${kegg}" \
+      "deseq_input_countdata.csv" \
+      "deseq_results.csv" \
       \$PWD
-
     """
 }
 
@@ -158,5 +161,5 @@ workflow {
     mapping(build_index.out.index_ch, trim_reads.out.trimmed_ch)
     mapping.out.bam_ch.collect() | set { all_bams_ch }
     feature_counts(get_reference.out.reference_gff_ch, all_bams_ch)
-    stat_analysis(feature_counts.out.counts_ch, geneDB_ch, analysis_script_ch)
+    stat_analysis(analysis_script_ch, feature_counts.out.counts_ch, geneDB_ch, kegg_ch)
 }
