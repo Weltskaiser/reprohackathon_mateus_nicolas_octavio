@@ -138,7 +138,6 @@ for (row in seq_along(ID_to_Names$`pan gene symbol`)) {
   }
 }
 
-#Comment
 ID_to_Names$Name <- gene_names
 ID_to_Names <- ID_to_Names %>% dplyr::select(`locus tag`, Name)
 colnames(ID_to_Names) <- c("Geneid", "Name")
@@ -241,7 +240,7 @@ for (kegg in list_kegg) {
     all_gene$NAME <- c(all_gene$NAME, desc)
 
     # Heuristic: TRUE for genes that are not pseudogenes / tRNA / ribosomal
-    is_aars <- !str_detect(
+    is_aars <- str_detect(
       desc,
       stringr::str_c(
         "\\b(",
@@ -256,12 +255,15 @@ for (kegg in list_kegg) {
 }
 
 # More genes
-all_gene$ID      <- append(all_gene$ID,   "SAOUHSC_01203")
-all_gene$NAME    <- append(all_gene$NAME, "ribonuclease III")
-all_gene$AA_tRNA <- append(all_gene$AA_tRNA, FALSE)
+all_gene$ID      <- c(all_gene$ID,   "SAOUHSC_01203")
+all_gene$NAME    <- c(all_gene$NAME, "ribonuclease III")
+all_gene$AA_tRNA <- c(all_gene$AA_tRNA, FALSE)
 
 # Translation factors (sao03012)
 
+# This time we download the KEGG data from the web
+# This is a less robust method because the KEGG data could change over the time
+# Also, importing a JSON file makes the code more portable if we want to change the input counts data in the future
 tmp_file <- tempfile(fileext = ".keg")
 download.file("https://www.genome.jp/kegg-bin/download_htext?htext=sao03012", destfile = tmp_file, quiet = TRUE)
 
@@ -275,8 +277,8 @@ sao03012_id <- stringr::str_extract(sao03012_raw, "SAOUHSC_\\d+")
 sao03012_AA_tRNA <- stringr::str_detect(sao03012_raw, "tRNA")
 
 # Add translation factors to the general gene list
-all_gene$ID      <- append(all_gene$ID,   unlist(sao03012_id))
-all_gene$AA_tRNA <- append(all_gene$AA_tRNA, unlist(sao03012_AA_tRNA))
+all_gene$ID      <- c(all_gene$ID,   unlist(sao03012_id))
+all_gene$AA_tRNA <- c(all_gene$AA_tRNA, unlist(sao03012_AA_tRNA))
 # (NAME is not used later, so we ignore it here)
 
 # Filter DESeq2 results only for these translation genes
@@ -288,7 +290,7 @@ aars_ids             <- unlist(all_gene$ID)[unlist(all_gene$AA_tRNA)]
 res_trans <- res_df[rownames(res_df) %in% gene_ids_translation, ]
 
 if (nrow(res_trans) == 0) {
-  warning("Nenhum gene de tradução (KEGG) encontrado nos resultados. MA-plot de tradução não será gerado.")
+  warning("No translation genes (KEGG) found in the results. Translation MA-plot will not be generated.")
 } else {
   # Mark which ones are AA-tRNA synthetases
   res_trans$AA_tRNA <- rownames(res_trans) %in% aars_ids
