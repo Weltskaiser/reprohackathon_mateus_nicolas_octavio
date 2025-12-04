@@ -1,16 +1,19 @@
-Run ReproHackathon Project
+<h1 align="center">🚀 ReproHackathon — How to Run the Project</h1>
+Before starting, ensure you are using a machine with:
 
-To run the ReproHackathon project, start by cloning the repository on a machine that has at least 16 CPUs, 32 GB RAM, and 200 GB of storage:
+ - 16+ CPUs
+ - 32 GB RAM
+ - 200 GB available storage
 
-git clone <repository-url>
-cd <repository-folder>
+🔧 Step 1 — Clone the Repository
 
+  `git clone <repository-url>`\
+  `cd <repository-folder>`
 
-Next, activate your Conda environment configured for Nextflow:
+🧬 Step 2 — Activate Nextflow Environment
 
-conda activate nextflow
+  `conda activate nextflow`
 
+▶️ Step 3 — Run the Pipeline
 
-Finally, run the main Nextflow pipeline:
-
-nextflow run main.nf
+  `nextflow run main.nf`
