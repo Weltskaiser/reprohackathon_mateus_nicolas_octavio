@@ -6,7 +6,6 @@ Channel
     // fast workflow try with small files:
     //.fromList(['SRR000073', 'SRR000074', 'SRR000075'])
     .set { sra_ids_ch }
-def CONTROL_IDS = ['SRR10379724','SRR10379725','SRR10379726']
 
 Channel
     .fromPath('GeneSpecificInformation_NCTC8325.xlsx')
@@ -122,61 +121,12 @@ process feature_counts {
     """
 }
 
-// Create control table
-process create_control_table {
-    publishDir "data/coldata/", mode: 'copy'
-
-    input:
-    path bam_files
-    val  control_ids
-
-    output:
-    path "coldata.txt", emit: coldata_ch
-
-    script:
-    """
-    Rscript - << 'EOF'
-    args_bam  <- "${bam_files.join(',')}"
-    args_ctrl <- "${control_ids.join(',')}"
-
-    mapped_files_path <- unlist(strsplit(args_bam, ","))
-    control_ids        <- unlist(strsplit(args_ctrl, ","))
-
-    extract_sra_id <- function(file_name) {
-      match <- regmatches(file_name, gregexpr("SRR[0-9]+", file_name))
-      if (length(match[[1]]) > 0) {
-        return(match[[1]][1])
-      } else {
-        return(NA)
-      }
-    }
-
-    sample_ids <- sapply(mapped_files_path, extract_sra_id)
-
-    coldata <- data.frame(
-      samples   = sample_ids,
-      condition = ifelse(sample_ids %in% control_ids, "control", "treatment"),
-      stringsAsFactors = FALSE
-    )
-
-    write.table(
-      coldata,
-      file      = "coldata.txt",
-      sep       = " ",
-      row.names = FALSE,
-      quote     = FALSE
-    )
-    EOF
-    """
-}
-
 // Differential analysis
 process stat_analysis {
     publishDir "results/deseq2", mode: 'copy', overwrite: true
 
     input:
     path count_table
-    path coldata_file
     path geneDB_file
     path analysis_script
 
@@ -190,7 +140,6 @@ process stat_analysis {
     """
     Rscript ${analysis_script} \
       "${count_table}" \
-      "${coldata_file}" \
       "deseq_input_countdata.csv" \
       "vst_table.csv" \
       "deseq_results.csv" \
@@ -208,7 +157,6 @@ workflow {
     build_index(get_reference.out.reference_fasta_ch)
     mapping(build_index.out.index_ch, trim_reads.out.trimmed_ch)
     mapping.out.bam_ch.collect() | set { all_bams_ch }
-    feature_counts(get_reference.out.reference_gff_ch, all_bams_ch)
-    create_control_table(all_bams_ch, CONTROL_IDS)
+    feature_counts(get_reference.out.reference_gff_ch, all_bams_ch)·
     stat_analysis(feature_counts.out.counts_ch, create_control_table.out.coldata_ch, geneDB_ch, analysis_script_ch)
 }
