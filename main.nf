@@ -158,5 +158,5 @@ workflow {
     mapping(build_index.out.index_ch, trim_reads.out.trimmed_ch)
     mapping.out.bam_ch.collect() | set { all_bams_ch }
     feature_counts(get_reference.out.reference_gff_ch, all_bams_ch)·
-    stat_analysis(feature_counts.out.counts_ch, create_control_table.out.coldata_ch, geneDB_ch, analysis_script_ch)
+    stat_analysis(feature_counts.out.counts_ch, geneDB_ch, analysis_script_ch)
 }
