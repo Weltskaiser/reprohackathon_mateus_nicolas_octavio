@@ -1,27 +1,19 @@
 #!/usr/bin/env Rscript
 
-###########################################################################################
-# THIS PART MUST BE CHANGED IN ORDER TO PLACE INSIDE NEXT FLOW
-
-# Diretório onde estão os arquivos baixados
-# (ajusta conforme onde você salvou)
+# Working directory, containing useful data
+# If necessary, change according to where they are
 main_path <- getwd()   # ou: "/caminho/para/sua/pasta"
 
-# Arquivos de entrada (baixados da máquina virtual)
-count_table_path  <- file.path(main_path, "counts.txt")          # nome do seu counts
-# coldata_file_path <- file.path(main_path, "coldata.txt")         # nome do seu coldata
+# Input files
+count_table_path  <- file.path(main_path, "counts.txt")
 geneDB_path       <- file.path(main_path, "GeneSpecificInformation_NCTC8325.xlsx")
 
-# Arquivos de saída (vão ser criados nesse diretório)
+# Output files (will be created in the same directory)
 output_finalcountdata_path <- file.path(main_path, "deseq_input_countdata.csv")
 output_vst_path            <- file.path(main_path, "vst_table.csv")
 output_file_path           <- file.path(main_path, "deseq_results.csv")
 
-############################################################################################
-
-
-# Packages
-
+# Packages loading
 library(DESeq2)
 library(stringi)
 library(stringr)
@@ -29,15 +21,11 @@ library(dplyr)
 library(glue)
 library(readxl)
 library(ggplot2)
-#library(KEGGREST)
 library(ggrepel)
+library(jsonlite)
 
 
-
-## Functions
-
-# This function arranges the count table for the analysis
-
+# Arrange the count table for the analysis
 formatation_table <- function(count_table, coldata) {
   columns    <- colnames(count_table)
   conditions <- unique(coldata$condition)    # Control or  treatment
@@ -59,7 +47,7 @@ formatation_table <- function(count_table, coldata) {
   # Detection of the samples columns from counts.txt (now columns)
   sample_columns <- columns[str_detect(columns, ".bam")]
 
-  # Connects each .bam column to your sample
+  # Connects each .bam column to the sample
   final_columns <- rep("", length(sample_columns))
   for (j in seq_along(sample_columns)) {
     for (i in seq_along(samples)) {
@@ -69,7 +57,7 @@ formatation_table <- function(count_table, coldata) {
     }
   }
 
-  # correction of the columns names: sample_columns -> final_columns
+  # Correction of the columns names: sample_columns -> final_columns
   table <- count_table[, c("Geneid", sample_columns)]
   names(table) <- c("Geneid", final_columns)
   table$Geneid <- str_replace(table$Geneid, "gene-", "")   # Erases "gene" from the sample names
@@ -83,8 +71,7 @@ formatation_table <- function(count_table, coldata) {
   return(output)
 }
 
-# Function used to avoid repetition of gene names
-
+# Avoid repetition of gene names
 avoid_repetition_name <- function(data, column) {
   column <- deparse(substitute(column))
   data$occurrence <- ave(seq_len(nrow(data)), data[[column]], FUN = seq_along)
@@ -99,13 +86,9 @@ avoid_repetition_name <- function(data, column) {
   return(data)
 }
 
+
 # Load tables
-
 raw_count_table <- read.table(count_table_path, sep = "\t", header = TRUE, check.names = FALSE)
-
-#coldata <- read.table(coldata_file_path, sep = " ", header = TRUE, check.names = FALSE)
-#coldata$condition <- as.character(coldata$condition)
-#coldata$samples   <- as.character(coldata$samples)
 
 sample_id_l = c("SRR10379721", "SRR10379722", "SRR10379723", "SRR10379724", "SRR10379725", "SRR10379726")
 condition_l = c("treatment", "treatment", "treatment", "control", "control", "control")
@@ -118,14 +101,14 @@ coldata <- data.frame(
 # Formatation of the count_table, and sync to coldata
 formatted <- formatation_table(raw_count_table, coldata)
 
-#Split formatted and update count_table (creation of a new table) and coldata
+# Split formatted and update count_table (creation of a new table) and coldata
 format_count_table <- formatted$countdata
 coldata <- formatted$coldata
 
 
 ## From AureoWik: GeneDB (.xlsx)
 
-# Reads file and replace "na" for "-"
+# Read file and replace "na" for "-"
 ID_to_Names <- read_excel(geneDB_path)
 ID_to_Names$`pan gene symbol`[is.na(ID_to_Names$`pan gene symbol`)] <- "-"
 
@@ -145,8 +128,8 @@ ID_to_Names <- ID_to_Names %>% dplyr::select(`locus tag`, Name)
 colnames(ID_to_Names) <- c("Geneid", "Name")
 ID_to_Names <- avoid_repetition_name(ID_to_Names, Name)
 
-#---------------------------------------------------------------------------------------------
-# Merge counts table + gene names
+
+## Merge counts table + gene names
 
 # Join through "Geneid"
 merged <- inner_join(ID_to_Names, format_count_table, by = "Geneid")
@@ -165,11 +148,13 @@ gene_names <- final_count_table$Name
 final_count_table <- final_count_table[, !names(final_count_table) %in% c("Name", "Geneid")]
 rownames(final_count_table) <- row_names
 
-## Salva matriz final de contagens usada pelo DESeq2
+## Export the final counts matrix used by DESeq2
 write.csv(final_count_table, file = output_finalcountdata_path, row.names = TRUE)
 
-#--------------------------------------------------------------------------------------------------------
-# DESeq2
+
+
+## DESeq2
+
 dds <- DESeqDataSetFromMatrix(
   countData = final_count_table,
   colData   = coldata,
@@ -179,11 +164,11 @@ dds <- DESeqDataSetFromMatrix(
 dds$condition <- relevel(dds$condition, ref = "control")
 dds <- DESeq(dds)
 
-#----------------------------------------------------------------------------------------------------
-# MA plot + results
-
 res <- results(dds, alpha = 0.05)
 res$color <- ifelse(res$padj < 0.05, "red", "black")
+
+
+## 1st MA plot with all genes + results
 
 p_ma <- ggplot(as.data.frame(res), aes(x = baseMean, y = log2FoldChange)) +
   geom_point(aes(color = color), alpha = 0.5) +
@@ -198,60 +183,31 @@ p_ma <- ggplot(as.data.frame(res), aes(x = baseMean, y = log2FoldChange)) +
   coord_cartesian(xlim = c(0.1, 4 * 10^5), ylim = c(-4, 4)) +
   scale_x_log10()
 
+# Export as PDF
 pdf(file = file.path(main_path, "MA_plot_all_genes.pdf"),
     width = 8, height = 7, family = "Helvetica", useDingbats = FALSE)
 print(p_ma)
 dev.off()
 
-
-## Export Results table
+# Export Results table
 res <- as.data.frame(subset(res, select = -color))
 res$conv_name <- gene_names
 write.csv(res, file = output_file_path, row.names = TRUE)
 
 
-##### FIN 1er MA PLOT #####
 
 
+## MA plot with translation genes
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#--------------------------------------------------------------------------------------
-#--------------------------------------------------------------------------------------
-#TEST
-
-## ============================
-## MA-plot só de genes de tradução (KEGG)
-## ============================
-
-message("Construindo MA-plot de genes relacionados à tradução (KEGG)...")
-
-# Copia resultados para um data.frame
+# Make a copy of the results from DESeq2
 res_df <- res
 
-# -----------------------------
-# 1) Buscar genes de tradução no KEGG
-#    sao03010, sao00970 = translation-related
-#    sao03012 = translation factors
-# -----------------------------
+# Search translation genes in KEGG Orthology
+# sao03010, sao00970 = translation-related
+# sao03012 = translation factors
 
-
-
+# We made an archive of the useful data from KEGG, in case it would change
+# Refer to get_kegg_2_sao.R to see how it has been built
 kegg_2_sao = fromJSON("kegg_2_sao.json")
 
 list_kegg <- c("sao03010", "sao00970")
@@ -259,7 +215,7 @@ all_gene  <- list(ID = list(), NAME = list(), AA_tRNA = list())
 
 for (kegg in list_kegg) {
   gene_keg <- kegg_2_sao[[kegg]]
-  genes_vec <- gene_keg$GENE  # vetor do tipo: ID1, desc1, ID2, desc2, ...
+  genes_vec <- gene_keg$GENE  # Vector of type: ID1, desc1, ID2, desc2, ...
 
   for (i in seq(1, length(genes_vec), by = 2)) {
     id   <- genes_vec[i]
@@ -268,7 +224,7 @@ for (kegg in list_kegg) {
     all_gene$ID   <- append(all_gene$ID,   id)
     all_gene$NAME <- append(all_gene$NAME, desc)
 
-    # Heurística: TRUE para genes que NÃO são pseudogene / tRNA / ribosomal
+    # Heuristic: TRUE for genes that are not pseudogenes / tRNA / ribosomal
     is_aars <- str_detect(
       desc,
       stringr::str_c(
@@ -289,9 +245,7 @@ all_gene$ID      <- append(all_gene$ID,   "SAOUHSC_01203")
 all_gene$NAME    <- append(all_gene$NAME, "ribonuclease III")
 all_gene$AA_tRNA <- append(all_gene$AA_tRNA, FALSE)
 
-# -----------------------------
-# 2) Translation factors (sao03012)
-# -----------------------------
+# Translation factors (sao03012)
 
 tmp_file <- tempfile(fileext = ".keg")
 download.file("https://www.genome.jp/kegg-bin/download_htext?htext=sao03012", destfile = tmp_file, quiet = TRUE)
@@ -352,9 +306,8 @@ res_trans$id_label <- ifelse(
   ""
 )
 
-# -----------------------------
-# 5) MA-plot de tradução
-# -----------------------------
+
+## MA plot with translation genes
 
 p_trans <- ggplot(res_trans) +
   geom_point(aes(x= log2BaseMean,y= log2FoldChange,fill= Significance, color= AA_tRNA),
@@ -394,6 +347,7 @@ p_trans <- ggplot(res_trans) +
   ) +
   theme_minimal()
 
+# Export as PDF
 pdf(
   file   = file.path(main_path, "MA_plot_translation.pdf"),
   width  = 8,
@@ -403,5 +357,3 @@ pdf(
 )
 print(p_trans)
 dev.off()
-
-message("MA_plot_translation.pdf salvo em: ", file.path(main_path, "MA_plot_translation.pdf"))

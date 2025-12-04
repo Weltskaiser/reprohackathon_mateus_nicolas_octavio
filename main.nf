@@ -8,7 +8,7 @@ Channel
     .set { sra_ids_ch }
 
 Channel
-    .fromPath('GeneSpecificInformation_NCTC8325.xlsx')
+    .fromPath('differential_analysis/GeneSpecificInformation_NCTC8325.xlsx')
     .set { geneDB_ch }
 
 Channel
@@ -157,6 +157,6 @@ workflow {
     build_index(get_reference.out.reference_fasta_ch)
     mapping(build_index.out.index_ch, trim_reads.out.trimmed_ch)
     mapping.out.bam_ch.collect() | set { all_bams_ch }
-    feature_counts(get_reference.out.reference_gff_ch, all_bams_ch)·
+    feature_counts(get_reference.out.reference_gff_ch, all_bams_ch)
     stat_analysis(feature_counts.out.counts_ch, geneDB_ch, analysis_script_ch)
 }
