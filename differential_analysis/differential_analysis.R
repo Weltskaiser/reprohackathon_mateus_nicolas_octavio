@@ -1,28 +1,32 @@
 #!/usr/bin/env Rscript
 
+##################################################
+## Debug on personal computer, without Nextflow ##
+####################################################################################
 # Working directory, containing useful data
 # If necessary, change according to where they are
-main_path <- getwd()   # ou: "/caminho/para/sua/pasta"
+#main_path <- getwd()   # ou: "/caminho/para/sua/pasta"
 
 # Input files
-count_table_path  <- file.path(main_path, "counts.txt")
-geneDB_path       <- file.path(main_path, "GeneSpecificInformation_NCTC8325.xlsx")
+#count_table_path  <- file.path(main_path, "counts.txt")
+#geneDB_path       <- file.path(main_path, "GeneSpecificInformation_NCTC8325.xlsx")
 # KEGG Orthology
-kegg_path         <- file.path(main_path, "kegg_2_sao.json")
-
+#kegg_path         <- file.path(main_path, "kegg_2_sao.json")
 # Output files (will be created in the same directory)
-output_finalcountdata_path <- file.path(main_path, "deseq_input_countdata.csv")
-#output_vst_path            <- file.path(main_path, "vst_table.csv")
-output_deseq_results_path           <- file.path(main_path, "deseq_results.csv")
+#output_finalcountdata_path <- file.path(main_path, "deseq_input_countdata.csv")
+#output_deseq_results_path           <- file.path(main_path, "deseq_results.csv")
+####################################################################################
 
-#args <- commandArgs(trailingOnly = TRUE)
-#count_table_path              <- args[1]
-#geneDB_path                   <- args[2]
-#kegg_path                     <- args[3]
-#output_finalcountdata_path    <- args[4]
-##output_vst_path               <- args[5]
-#output_deseq_results_path     <- args[6]
-#main_path2                    <- args[7]
+args <- commandArgs(trailingOnly = TRUE)
+# Input paths
+count_table_path              <- args[1]
+geneDB_path                   <- args[2]
+kegg_path                     <- args[3]
+# Output paths
+output_finalcountdata_path    <- args[4]
+output_deseq_results_path     <- args[5]
+# Working directory
+main_path                     <- args[6]
 
 
 # Packages loading
@@ -241,7 +245,7 @@ for (kegg in list_kegg) {
       desc,
       stringr::str_c(
         "\\b(",
-        stringr::str_c(c("pseudogene", "tRNA-", "ribosomal", "Ribosomal"),
+        stringr::str_c(c("-tRNA"),
                        collapse = "|"),
         ")\\b"
       )
@@ -261,55 +265,48 @@ all_gene$AA_tRNA <- append(all_gene$AA_tRNA, FALSE)
 tmp_file <- tempfile(fileext = ".keg")
 download.file("https://www.genome.jp/kegg-bin/download_htext?htext=sao03012", destfile = tmp_file, quiet = TRUE)
 
-# Read lines from KEGG files
+# Read data from KEGG
 sao03012_raw <- readLines(tmp_file)
-
-# Fica só com linhas que tenham SAOUHSC_ (ids de genes)
+# Keep only lines that have SAOUHSC_ (gene IDs)
 sao03012_raw <- sao03012_raw[ stringr::str_detect(sao03012_raw, "SAOUHSC_") ]
-
-# Extrai diretamente os IDs SAOUHSC_XXXXX
+# Extract SAOUHSC_XXXXX IDs directly
 sao03012_id <- stringr::str_extract(sao03012_raw, "SAOUHSC_\\d+")
-
-# Marca quais desses têm "tRNA" no texto (aminoacyl-tRNA-related)
+# Mark which ones have "tRNA" in the text (aminoacyl-tRNA-related)
 sao03012_AA_tRNA <- stringr::str_detect(sao03012_raw, "tRNA")
 
-
-# Adiciona translation factors na lista geral de genes
+# Add translation factors to the general gene list
 all_gene$ID      <- append(all_gene$ID,   unlist(sao03012_id))
 all_gene$AA_tRNA <- append(all_gene$AA_tRNA, unlist(sao03012_AA_tRNA))
-# (NAME não é usado mais pra frente, então ignoramos aqui)
+# (NAME is not used later, so we ignore it here)
 
-# -----------------------------
-# 3) Filtrar resultados DESeq2 só para esses genes de tradução
-# -----------------------------
+# Filter DESeq2 results only for these translation genes
 
 gene_ids_translation <- unlist(all_gene$ID)
 aars_ids             <- unlist(all_gene$ID)[unlist(all_gene$AA_tRNA)]
 
-# Mantém só genes cujo rowname (Geneid) está em gene_ids_translation
+# Keep only genes whose rowname (Geneid) is in gene_ids_translation
 res_trans <- res_df[rownames(res_df) %in% gene_ids_translation, ]
 
 if (nrow(res_trans) == 0) {
   warning("Nenhum gene de tradução (KEGG) encontrado nos resultados. MA-plot de tradução não será gerado.")
 } else {
-  # Marca quais são AA-tRNA synthetases
+  # Mark which ones are AA-tRNA synthetases
   res_trans$AA_tRNA <- rownames(res_trans) %in% aars_ids
 }
-# -----------------------------
-# 4) Preparar colunas para plot
-# -----------------------------
 
-# Log2 da média (como na figura do artigo)
+# Prepare columns for plot
+
+# Log2 of the mean (as in the figure in the article)
 res_trans$log2BaseMean <- log2(res_trans$baseMean + 1)
 
-# Significância pelo padj
+# Significance by padj
 res_trans$Significance <- ifelse(
   !is.na(res_trans$padj) & res_trans$padj <= 0.05,
   "Significant",
   "Non-Significant"
 )
 
-# Genes a rotular explicitamente
+# Genes to explicitly label
 genes_to_label <- c("frr", "infA", "tsf", "infC", "infB", "pth")
 res_trans$id_label <- ifelse(
   res_trans$conv_name %in% genes_to_label,
