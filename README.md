@@ -18,7 +18,7 @@ Before starting, ensure you are using a machine with:
 
 🔧 Step 1 — Clone the Repository
 
-  `git clone https://github.com/Weltskaiser/reprohackathon_mateus_nicolas_octavio.git`
+  `git clone https://github.com/Weltskaiser/reprohackathon_mateus_nicolas_octavio.git`  
   `cd reprohackathon_mateus_nicolas_octavio`
 
 ▶️ Step 2 — Run the Pipeline
